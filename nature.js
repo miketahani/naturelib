@@ -1,4 +1,4 @@
-function Vec2(x, y, z) {
+function Vec2(x, y) {
 
   this.x = x || 0;
   this.y = y || 0;
@@ -67,16 +67,15 @@ Vec2.prototype.divScalar = function(scalar) {
 
 };
 
-Vec2.prototype.mag = (function() {
+Vec2.prototype.mag = function() {
 
   return this.magnitude = Math.sqrt(this.x * this.x + this.y * this.y);
 
-})();
+};
 
 Vec2.prototype.normalize = function() {
 
-  // this.x = this.x / (this.magnitude || (this.magnitude = this.mag()));
-  if (mag !== 0) {
+  if (this.mag() !== 0) {
     this.x = this.x / this.magnitude; 
     this.y = this.y / this.magnitude;
   }
@@ -85,20 +84,18 @@ Vec2.prototype.normalize = function() {
 
 
 
-
-
-
-
-function Mover(location, velocity, acceleration) {
+function Mover(location, velocity, acceleration, mass) {
   
   this.location     = location || new Vec2();
   this.velocity     = velocity || new Vec2();
   this.acceleration = acceleration || new Vec2();
+  this.mass         = mass || 10.0;
 
 };
 
 Mover.prototype.applyForce = function(vec) {
 
+  Vec2.prototype.divScalar(this.mass);
   this.acceleration.addVec(vec);
 
 };
@@ -108,4 +105,17 @@ Mover.prototype.update = function() {
   this.velocity.addVec(this.acceleration);
   this.location.addVec(this.velocity);
 
+  this.acceleration.multScalar(0);  // clear
+
 };
+
+
+// XXX quick and dirty: pull it into node
+if (module) {
+
+  module.exports = {
+    Vec2: Vec2,
+    Mover: Mover
+  };
+
+}
